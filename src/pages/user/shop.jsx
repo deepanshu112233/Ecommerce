@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from "react-helmet";
 
-
 const Shop = ({category}) => {
   const [viewMode, setViewMode] = useState('grid');
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -32,7 +31,7 @@ const Shop = ({category}) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-product');
+        const response = await fetch('https://ecommerse-assingment-backend.onrender.com/get-product');
         const data = await response.json();
         console.log(data.products)
         if (data.success) {
@@ -88,23 +87,11 @@ const Shop = ({category}) => {
   };
 
   const handleLoadMore = () => {
-    setLoadMore(prevLoadMore => {
-      const nextLoadMore = prevLoadMore + 6;
-      if (nextLoadMore <= filteredProducts.length) {
-        return nextLoadMore;
-      }
-      return prevLoadMore; // If there are no more products to load, return the previous value
-    });
+    setLoadMore(prevLoadMore => prevLoadMore + 6);
   };
 
   const handleShowLess = () => {
-    setLoadMore(prevLoadMore => {
-      const nextLoadMore = prevLoadMore - 6;
-      if (nextLoadMore < 6) {
-        return 6; // Ensure it doesn't go below 6
-      }
-      return nextLoadMore;
-    });
+    setLoadMore(prevLoadMore=>prevLoadMore-6);
   };
 
   const addPostToRecentlyViewed = (productId) => {
@@ -125,8 +112,7 @@ const Shop = ({category}) => {
       <Helmet>
         <title>Shop | Mera Bestie</title>
       </Helmet>
-      <div className="bg-gradient-to-b from-blue-50 to-blue-100 min-h-scre
-      en">
+      <div className="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
         <Navbar />
 
         {/* Hero Section with Refined Design */}
@@ -261,7 +247,7 @@ const Shop = ({category}) => {
                     className={`relative ${viewMode === 'grid' ? 'aspect-video' : 'w-1/4'} bg-gray-100`}
                   >
                     <img
-                      src={product.img || '/notfound.png'}
+                      src={product.img}
                       alt={product.name}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
@@ -339,7 +325,7 @@ const Shop = ({category}) => {
               <button 
                 className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
                 onClick={handleShowLess}
-                hidden={loadMore <= 6}
+                hidden={filteredProducts.length < 6}
               >
                 Show Less
               </button>
@@ -379,187 +365,3 @@ const Shop = ({category}) => {
 };
 
 export default Shop;
-
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import { FaFilter, FaSort } from 'react-icons/fa';
-// import Navbar from '../../components/user/navbar/navbar';
-// import { Link } from 'react-router-dom';
-
-// const Shop = ({ category }) => {
-//   const [products, setProducts] = useState([]); // Original product data
-//   const [filteredProducts, setFilteredProducts] = useState([]); // Products after filtering and search
-//   const [searchQuery, setSearchQuery] = useState(''); // For search
-//   const [selectedCategory, setSelectedCategory] = useState(category || 'all'); // For category filtering
-//   const [sortOption, setSortOption] = useState('default'); // For sorting
-//   const [loadMore, setLoadMore] = useState(6);
-
-//   const categories = [
-//     { name: 'Books' },
-//     { name: 'Gift Boxes' },
-//     { name: 'Stationery' },
-//   ];
-
-//   useEffect(() => {
-//     const fetchProducts = async () => {
-//       try {
-//         const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-product');
-//         const data = await response.json();
-//         if (data.success) {
-//           const validProducts = data.products.filter(product =>
-//             product.name && product.price && product.img && product.category && product._id &&
-//             (product.visibility === "on" || product.visibility === "true")
-//           );
-//           setProducts(validProducts);
-//           setFilteredProducts(validProducts);
-//         }
-//       } catch (error) {
-//         console.error('Error fetching products:', error);
-//       }
-//     };
-//     fetchProducts();
-//   }, []);
-
-//   const applyFilters = () => {
-//     let result = [...products];
-
-//     // Apply category filter
-//     if (selectedCategory !== 'all') {
-//       result = result.filter(product => product.category === selectedCategory);
-//     }
-
-//     // Apply search filter
-//     if (searchQuery.trim() !== '') {
-//       result = result.filter(product =>
-//         product.name.toLowerCase().includes(searchQuery.toLowerCase())
-//       );
-//     }
-
-//     // Apply sorting
-//     if (sortOption === 'price-asc') {
-//       result.sort((a, b) => a.price - b.price);
-//     } else if (sortOption === 'price-desc') {
-//       result.sort((a, b) => b.price - a.price);
-//     } else if (sortOption === 'rating') {
-//       result.sort((a, b) => b.rating - a.rating); // Assuming rating is a property in the product object
-//     }
-
-//     setFilteredProducts(result);
-//   };
-
-//   const handleCategoryFilter = (category) => {
-//     setSelectedCategory(category);
-//   };
-
-//   const handleSearch = (query) => {
-//     setSearchQuery(query);
-//   };
-
-//   const handleSort = (option) => {
-//     setSortOption(option);
-//   };
-
-//   useEffect(() => {
-//     applyFilters();
-//   }, [selectedCategory, searchQuery, sortOption]);
-
-//   const handleLoadMore = () => {
-//     setLoadMore(prevLoadMore => prevLoadMore + 6);
-//   };
-
-//   return (
-//     <>
-//       <div className="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
-//         <Navbar />
-
-//         <div className="max-w-7xl mx-auto px-6 py-8">
-//           <div className="flex items-center justify-between mb-8">
-//             {/* Search Bar */}
-//             <input
-//               type="text"
-//               placeholder="Search for products..."
-//               value={searchQuery}
-//               onChange={(e) => handleSearch(e.target.value)}
-//               className="w-1/3 p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
-//             />
-
-//             {/* Category Filter */}
-//             <div className="flex space-x-4">
-//               {categories.map((cat) => (
-//                 <button
-//                   key={cat.name}
-//                   onClick={() => handleCategoryFilter(cat.name)}
-//                   className={`px-4 py-2 rounded ${selectedCategory === cat.name ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-//                 >
-//                   {cat.name}
-//                 </button>
-//               ))}
-//               <button
-//                 onClick={() => handleCategoryFilter('all')}
-//                 className={`px-4 py-2 rounded ${selectedCategory === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-//               >
-//                 All Products
-//               </button>
-//             </div>
-
-//             {/* Sort Dropdown */}
-//             <div>
-//               <select
-//                 value={sortOption}
-//                 onChange={(e) => handleSort(e.target.value)}
-//                 className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
-//               >
-//                 <option value="default">Sort By</option>
-//                 <option value="price-asc">Price: Low to High</option>
-//                 <option value="price-desc">Price: High to Low</option>
-//                 <option value="rating">Rating</option>
-//               </select>
-//             </div>
-//           </div>
-
-//           {/* Products Display */}
-//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-//             {filteredProducts.slice(0, loadMore).map((product) => (
-//               <div key={product._id} className="bg-white shadow-lg rounded-xl overflow-hidden">
-//                 <img
-//                   src={product.img || '/notfound.png'}
-//                   alt={product.name}
-//                   className="w-full h-56 object-cover"
-//                 />
-//                 <div className="p-4">
-//                   <h4 className="text-lg font-bold text-blue-700">{product.name}</h4>
-//                   <p className="text-sm text-gray-600">{product.category}</p>
-//                   <div className="flex justify-between items-center mt-4">
-//                     <span className="text-xl font-bold text-blue-600">{product.price}</span>
-//                     <Link
-//                       to={`/product/${product._id}`}
-//                       className="text-sm text-blue-500"
-//                     >
-//                       View Details
-//                     </Link>
-//                   </div>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-
-//           {/* Load More */}
-//           {filteredProducts.length > loadMore && (
-//             <div className="text-center mt-6">
-//               <button
-//                 className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
-//                 onClick={handleLoadMore}
-//               >
-//                 Load More
-//               </button>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Shop;
